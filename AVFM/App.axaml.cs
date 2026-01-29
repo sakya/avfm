@@ -20,19 +20,19 @@ namespace AVFM
         public override void Initialize()
         {
             // Load settings
-            App.LocalPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AVFM");
-            if (!Directory.Exists(App.LocalPath))
-                Directory.CreateDirectory(App.LocalPath);
-            App.SettingsPath = Path.Join(App.LocalPath, "settings.json");
-            if (File.Exists(App.SettingsPath)) {
+            LocalPath = Path.Join(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "AVFM");
+            if (!Directory.Exists(LocalPath))
+                Directory.CreateDirectory(LocalPath);
+            SettingsPath = Path.Join(LocalPath, "settings.json");
+            if (File.Exists(SettingsPath)) {
                 try {
-                    Settings = Settings.Load(App.SettingsPath);
+                    Settings = Settings.Load(SettingsPath);
                 } catch {
-                    Settings = new Settings();                    
+                    Settings = new Settings();
                 }
             } else {
                 Settings = new Settings();
-                Settings.Save(App.SettingsPath);
+                Settings.Save(SettingsPath);
             }
 
             Localizer.Localizer.Instance.LoadLanguage(Settings.Language);

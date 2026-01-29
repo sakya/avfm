@@ -296,17 +296,17 @@ namespace AVFM.FileManagers
 
         public override bool OpenFileWithDefaultApplication(string filePath)
         {
-            ProcessStartInfo si = new ProcessStartInfo();
+            var si = new ProcessStartInfo();
             si.FileName = "xdg-open";
             si.Arguments = $"\"{filePath}\"";
             si.WindowStyle = ProcessWindowStyle.Hidden;
             si.UseShellExecute = false;
             si.CreateNoWindow = true;
 
-            Process process = new Process();
+            var process = new Process();
             process.StartInfo = si;
 
-            bool res = true;
+            var res = true;
             try {
                 process.Start();
                 process.WaitForExit();
@@ -332,8 +332,8 @@ namespace AVFM.FileManagers
         {
             string mimeType = null;
             if (OperatingSystem.IsWindows()) {
-                string ext = (filePath.Contains(".")) ? Path.GetExtension(filePath).ToLower() : "." + filePath;
-                Microsoft.Win32.RegistryKey regKey = Microsoft.Win32.Registry.ClassesRoot.OpenSubKey(ext);
+                var ext = (filePath.Contains(".")) ? Path.GetExtension(filePath).ToLower() : "." + filePath;
+                var regKey = Microsoft.Win32.Registry.ClassesRoot.OpenSubKey(ext);
                 if (regKey != null && regKey.GetValue("Content Type") != null) mimeType = regKey.GetValue("Content Type").ToString();
             }
             if (mimeType == null)
@@ -348,17 +348,17 @@ namespace AVFM.FileManagers
 
         public override bool OpenFileWithDefaultApplication(string filePath)
         {
-            ProcessStartInfo si = new ProcessStartInfo();
+            var si = new ProcessStartInfo();
             si.FileName = "cmd.exe";
             si.Arguments = $"/c \"{filePath}\"";
             si.WindowStyle = ProcessWindowStyle.Hidden;
             si.UseShellExecute = false;
             si.CreateNoWindow = true;
 
-            Process process = new Process();
+            var process = new Process();
             process.StartInfo = si;
 
-            bool res = true;
+            var res = true;
             try {
                 process.Start();
                 process.WaitForExit();

@@ -1,0 +1,66 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:AVFM.Controls"
+        xmlns:i18n="clr-namespace:AVFM.Localizer"
+        xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="AVFM.Views.FileOverwriteConfirmWindow"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False"
+        CanResize="False"
+        Title="{i18n:Localize OverwriteConfirmTitle}"
+        SizeToContent="WidthAndHeight">
+  <Panel>
+    <ExperimentalAcrylicBorder IsHitTestVisible="False">
+      <ExperimentalAcrylicBorder.Material>
+        <ExperimentalAcrylicMaterial
+          BackgroundSource="Digger"
+          TintColor="Black"
+          TintOpacity="1"
+          MaterialOpacity="0.65" />
+      </ExperimentalAcrylicBorder.Material>
+    </ExperimentalAcrylicBorder>
+    <DockPanel>
+      <controls:TitleBar
+        CanMinimize="False" CanMaximize="False"
+        DockPanel.Dock="Top"/>
+
+      <Grid Margin="15">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="*" />
+          <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <StackPanel Orientation="Vertical" Grid.Row="0">
+          <TextBlock Name="m_Message" TextWrapping="Wrap" />
+          <TextBlock TextWrapping="Wrap" Margin="0,15,0,0" Text="{i18n:Localize ExistingFile}" Foreground="{DynamicResource SystemAccentBrush}" />
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="Auto" />
+              <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Image Grid.Column="0" Name="m_DestIcon" Width="32" Height="32" Margin="0,5,0,5" />
+            <TextBlock Grid.Column="1" Name="m_Dest" TextWrapping="Wrap" VerticalAlignment="Center" />
+          </Grid>
+          <TextBlock TextWrapping="Wrap" Margin="0,15,0,0" Text="{i18n:Localize NewFile}" Foreground="{DynamicResource SystemAccentBrush}"/>
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="Auto" />
+              <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+            <Image Grid.Column="0" Name="m_SourceIcon" Width="32" Height="32" Margin="0,5,0,5" />
+            <TextBlock Grid.Column="1" Name="m_Source" TextWrapping="Wrap" VerticalAlignment="Center" />
+          </Grid>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+          <CheckBox Name="m_ApplyToAll" Content="{i18n:Localize ApplyToAllFiles}" Margin="0,0,5,0" />
+          <Button Click="OnYesClick" IsDefault="True" MinWidth="70" HorizontalContentAlignment="Center" Content="{i18n:Localize Yes}" />
+          <Button Click="OnNoClick" IsCancel="True" Margin="5,5,0,5" MinWidth="70" HorizontalContentAlignment="Center" Content="{i18n:Localize No}" />
+        </StackPanel>
+      </Grid>
+    </DockPanel>
+  </Panel>
+</Window>

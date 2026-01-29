@@ -1,0 +1,162 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+        xmlns:i18n="clr-namespace:AVFM.Localizer"
+        xmlns:controls="clr-namespace:AVFM.Controls"
+        xmlns:models="clr-namespace:AVFM.Models"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        WindowStartupLocation="CenterScreen"
+        x:Class="AVFM.Views.MainWindow"
+        Title="AVFM">
+    <Panel>
+        <ExperimentalAcrylicBorder IsHitTestVisible="False">
+            <ExperimentalAcrylicBorder.Material>
+                <ExperimentalAcrylicMaterial
+                    BackgroundSource="Digger"
+                    TintColor="Black"
+                    TintOpacity="1"
+                    MaterialOpacity="0.65" />
+            </ExperimentalAcrylicBorder.Material>
+        </ExperimentalAcrylicBorder>
+        <DockPanel>
+            <controls:TitleBar DockPanel.Dock="Top" />
+            <!-- Main menu -->
+            <Menu Name="m_MainMenu" DockPanel.Dock="Top">
+                <MenuItem Header="{i18n:Localize _File}">
+                    <MenuItem Header="{i18n:Localize _NewTab}" Click="OnNewTabClicked" InputGesture="{Binding NewTabGesture}">
+                        <MenuItem.Icon>
+                            <i:Icon FontSize="14" Value="far fa-plus-square" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="{i18n:Localize _CloseTab}" Click="OnCloseTabClicked" InputGesture="{Binding CloseTabGesture}">
+                        <MenuItem.Icon>
+                            <i:Icon FontSize="14" Value="far fa-minus-square" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <MenuItem Header="{i18n:Localize _NewFolder}" Click="OnCreateDirClicked" InputGesture="{Binding CreateFolderGesture}">
+                        <MenuItem.Icon>
+                            <i:Icon FontSize="14" Value="fas fa-folder-plus" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                    <Separator />
+                    <MenuItem Header="{i18n:Localize _Exit}" Click="OnExitClicked">
+                        <MenuItem.Icon>
+                            <i:Icon FontSize="14" Value="fas fa-sign-out-alt" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Header="{i18n:Localize _View}">
+                    <controls:CheckableMenuItem Name="m_ShowHiddenFilesMenu" Header="{i18n:Localize _ShowHiddenFiles}" IsCheckedChanged="OnShowHiddenFilesChanged"/>
+                    <controls:CheckableMenuItem Name="m_ShowTreeMenu" Header="{i18n:Localize _ShowTree}" IsCheckedChanged="OnShowTreeChanged"/>
+                    <Separator />
+                    <controls:CheckableMenuItem Name="m_ViewListMenu" Header="{i18n:Localize Mode_List}" Group="viewMode" Tag="List" IsCheckedChanged="OnViewModeChanged" />
+                    <controls:CheckableMenuItem Name="m_ViewIconMenu" Header="{i18n:Localize Mode_Icon}" Group="viewMode" Tag="Icon" IsCheckedChanged="OnViewModeChanged" />
+                    <Separator />
+                    <MenuItem Header="{i18n:Localize _Settings}">
+                        <MenuItem.Icon>
+                            <i:Icon FontSize="14" Value="fas fa-cogs" />
+                        </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+                <MenuItem Header="{i18n:Localize _Help}">
+                    <MenuItem Header="{i18n:Localize _About}">
+                    <MenuItem.Icon>
+                        <i:Icon FontSize="14" Value="far fa-question-circle" />
+                    </MenuItem.Icon>
+                    </MenuItem>
+                </MenuItem>
+            </Menu>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <!-- Toolbar -->
+                <Grid Grid.Row="0">
+                    <StackPanel Orientation="Horizontal" Margin="5">
+                        <Button Focusable="False" Height="32" i:Attached.Icon="fas fa-network-wired" Margin="0,0,5,0"
+                                Click="OnToggleTreeViewClicked" ToolTip.Tip="{i18n:Localize ToggleTreeView}" />
+                        <Button Focusable="False" Height="32" i:Attached.Icon="fas fa-th-list" Margin="0,0,5,0"
+                                Name="m_ToggleViewBtn"
+                                Click="OnToggleViewClicked" ToolTip.Tip="{i18n:Localize ToggleView}" />
+                    </StackPanel>
+                </Grid>
+
+                <Border Height="2" Grid.Row="1" Background="#32ffffff" VerticalAlignment="Top" Margin="0,-2,0,0" />
+                <Grid Name="m_InnerGrid" Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*" MinWidth="100" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="5*" MinWidth="100" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="5*" MinWidth="100" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Directory Tree -->
+                    <controls:DirectoryTreeControl Grid.Column="0" Name="m_Tree" Padding="5" Margin="0"
+                                                   Background="#64000000"/>
+
+                    <GridSplitter Name="m_GridSplitter" Grid.Column="1" KeyboardNavigation.IsTabStop="False" />
+
+                    <!-- Left tabs -->
+                    <TabControl Name="m_LeftTabControl" Grid.Column="2" SelectionChanged="OnTabChanged">
+                        <TabControl.Styles>
+                            <Style Selector="TabItem">
+                                <Setter Property="HeaderTemplate">
+                                    <DataTemplate x:DataType="models:TabItemHeader">
+                                         <StackPanel Orientation="Horizontal" Background="Transparent"
+                                                     PointerPressed="OnTabPointerPressed"
+                                                     PointerReleased="OnTabPointerReleased">
+                                              <i:Icon Value="{Binding Icon}"
+                                                      Foreground="{DynamicResource SystemAccentBrush}"
+                                                      VerticalAlignment="Center" FontSize="16" />
+                                              <TextBlock Text="{Binding Text}"
+                                                         FontSize="16"
+                                                         VerticalAlignment="Center"
+                                                         TextTrimming="CharacterEllipsis"
+                                                         Margin="5,0,5,0"
+                                                         MinWidth="30" MaxWidth="200"/>
+                                         </StackPanel>
+                                    </DataTemplate>
+                                </Setter>
+                            </Style>
+                        </TabControl.Styles>
+                    </TabControl>
+
+                    <GridSplitter Grid.Column="3" KeyboardNavigation.IsTabStop="False" />
+
+                    <!-- Right tabs -->
+                    <TabControl Name="m_RightTabControl" Grid.Column="4" SelectionChanged="OnTabChanged">
+                        <TabControl.Styles>
+                            <Style Selector="TabItem">
+                                <Setter Property="HeaderTemplate">
+                                    <DataTemplate x:DataType="models:TabItemHeader">
+                                        <StackPanel Orientation="Horizontal" Background="Transparent"
+                                                    PointerPressed="OnTabPointerPressed"
+                                                    PointerReleased="OnTabPointerReleased">
+                                            <i:Icon Value="{Binding Icon}"
+                                                    Foreground="{DynamicResource SystemAccentBrush}"
+                                                    VerticalAlignment="Center" FontSize="16" />
+                                            <TextBlock Text="{Binding Text}"
+                                                       FontSize="16"
+                                                       VerticalAlignment="Center"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       Margin="5,0,5,0"
+                                                       MinWidth="30" MaxWidth="200"/>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </Setter>
+                            </Style>
+                        </TabControl.Styles>
+                    </TabControl>
+                </Grid>
+
+                <!-- Status bar -->
+            </Grid>
+        </DockPanel>
+    </Panel>
+</Window>

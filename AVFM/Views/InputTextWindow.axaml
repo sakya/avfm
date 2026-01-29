@@ -1,0 +1,46 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:controls="clr-namespace:AVFM.Controls"
+        xmlns:i18n="clr-namespace:AVFM.Localizer"
+        xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        x:Class="AVFM.Views.InputTextWindow"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False"
+        CanResize="False"
+        SizeToContent="WidthAndHeight">
+  <Panel>
+    <ExperimentalAcrylicBorder IsHitTestVisible="False">
+      <ExperimentalAcrylicBorder.Material>
+        <ExperimentalAcrylicMaterial
+          BackgroundSource="Digger"
+          TintColor="Black"
+          TintOpacity="1"
+          MaterialOpacity="0.65" />
+      </ExperimentalAcrylicBorder.Material>
+    </ExperimentalAcrylicBorder>
+    <DockPanel>
+      <controls:TitleBar
+        CanMinimize="False" CanMaximize="False"
+        DockPanel.Dock="Top"/>
+
+      <Grid Margin="15">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+          <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Label Name="m_Label" />
+        <TextBox Name="m_TextBox" Grid.Row="1" MinWidth="300" MaxWidth="500" HorizontalAlignment="Left" />
+
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,15,0,0">
+          <Button Name="m_Ok" Click="OnOkClick" IsDefault="True" MinWidth="70" HorizontalContentAlignment="Center" Content="{i18n:Localize Ok}" />
+          <Button Name="m_Cancel" Click="OnCancelClick" IsCancel="True" Margin="5,5,0,5" MinWidth="70" HorizontalContentAlignment="Center" Content="{i18n:Localize Cancel}" />
+        </StackPanel>
+      </Grid>
+    </DockPanel>
+  </Panel>
+</Window>

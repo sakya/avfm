@@ -1,0 +1,18 @@
+﻿<Style xmlns="https://github.com/avaloniaui"
+       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+       xmlns:sys="clr-namespace:System;assembly=netstandard">
+  <Style.Resources>
+    <SolidColorBrush x:Key="SystemControlBackgroundAltHighBrush" Color="#1e1e1e" />
+    <SolidColorBrush x:Key="TextControlBackground" Color="#1e1e1e" />
+    <SolidColorBrush x:Key="TextControlBackgroundPointerOver" Color="#1e1e1e" />
+    <SolidColorBrush x:Key="TextControlBackgroundFocused" Color="#1e1e1e" />
+
+    <SolidColorBrush x:Key="ComboBoxBackground" Color="#1e1e1e" />
+    <SolidColorBrush x:Key="ComboBoxBackgroundPointerOver" Color="#1e1e1e" />
+
+
+    <Color x:Key="InfoColor">#5bc0de</Color>
+    <Color x:Key="WarningColor">#f0ad4e</Color>
+    <Color x:Key="DangerColor">#d9534f</Color>
+  </Style.Resources>
+</Style>

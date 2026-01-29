@@ -1,0 +1,42 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+             xmlns:i18n="clr-namespace:AVFM.Localizer" 
+             xmlns:converters="clr-namespace:AVFM.Converters"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="AVFM.Controls.DirectoryTreeControl">
+
+    <UserControl.Resources>
+        <converters:BitmapValueConverter x:Key="BitmapValueConverter"/>
+    </UserControl.Resources>
+
+    <TreeView Name="m_Tree">
+        <TreeView.Styles>
+            <Style Selector="TreeViewItem">
+                <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+            </Style>
+        </TreeView.Styles> 
+        <TreeView.ItemsPanel>
+            <ItemsPanelTemplate>
+                <StackPanel MaxWidth="{Binding #m_Tree.Bounds.Width}" />
+            </ItemsPanelTemplate>
+        </TreeView.ItemsPanel>         
+        <TreeView.ItemTemplate>        
+          <TreeDataTemplate ItemsSource="{Binding Children}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Image Grid.Column="0" Source="{Binding Icon, Converter={StaticResource BitmapValueConverter}, ConverterParameter=16}" Width="16" Height="16" Margin="0,0,5,0" />
+                <TextBlock Grid.Column="1" Text="{Binding File.Name}" 
+                           TextTrimming="CharacterEllipsis" MaxWidth="300" 
+                           VerticalAlignment="Center" HorizontalAlignment="Left" />
+            </Grid>        
+          </TreeDataTemplate>
+        </TreeView.ItemTemplate>    
+    </TreeView>
+</UserControl>

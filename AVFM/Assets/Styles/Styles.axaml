@@ -1,0 +1,40 @@
+﻿<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Styles.Resources>
+      <SolidColorBrush x:Key="SystemAccentBrush" Color="{DynamicResource SystemAccentColor}" />
+      <SolidColorBrush x:Key="DangerBrush" Color="{DynamicResource DangerColor}" />
+      <SolidColorBrush x:Key="SystemBaseMediumBrush" Color="{DynamicResource SystemBaseMediumColor}" />
+      <SolidColorBrush x:Key="HighlightBrush" Color="{DynamicResource HighlightColor}" />
+    </Styles.Resources>
+
+    <Style Selector="TextBox.Error">
+      <Setter Property="Background" Value="{DynamicResource DangerBrush}" />
+    </Style>
+
+    <Style Selector="ProgressBar">
+      <Setter Property="Height" Value="20" />
+      <Setter Property="MinHeight" Value="20" />
+    </Style>
+
+    <Style Selector="GridSplitter">
+      <Setter Property="Background" Value="{DynamicResource SystemBaseMediumBrush}" />
+      <Setter Property="Focusable" Value="False" />
+      <Setter Property="Width" Value="6" />
+      <Setter Property="MinWidth" Value="6" />
+      <Setter Property="Template">
+        <ControlTemplate>
+            <Border Background="{TemplateBinding Background}" CornerRadius="3">
+
+            </Border>
+        </ControlTemplate>
+      </Setter>
+    </Style>
+    <Style Selector="GridSplitter:pointerover">
+      <Setter Property="Background" Value="{DynamicResource SystemAccentBrush}" />
+    </Style>
+
+    <Style Selector="Border.icon-button">
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="Background" Value="Transparent" />
+    </Style>
+</Styles>

@@ -1,0 +1,213 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:i="clr-namespace:Projektanker.Icons.Avalonia;assembly=Projektanker.Icons.Avalonia"
+             xmlns:i18n="clr-namespace:AVFM.Localizer"
+             xmlns:converters="clr-namespace:AVFM.Converters"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="AVFM.Controls.FileListingControl">
+
+    <UserControl.Resources>
+        <converters:FileNameConverter x:Key="FileNameConverter"/>
+        <converters:SizeConverter x:Key="SizeConverter"/>
+        <converters:DateTimeConverter x:Key="DateTimeConverter"/>
+        <converters:BitmapValueConverter x:Key="BitmapValueConverter"/>
+    </UserControl.Resources>
+
+    <UserControl.Styles>
+        <Style Selector="StackPanel.spinner">
+            <Style.Animations>
+                <Animation Duration="0:0:1" IterationCount="INFINITE">
+                <KeyFrame Cue="0%">
+                    <Setter Property="RotateTransform.Angle" Value="0"/>
+                </KeyFrame>
+                <KeyFrame Cue="100%">
+                    <Setter Property="RotateTransform.Angle" Value="360"/>
+                </KeyFrame>
+                </Animation>
+            </Style.Animations>
+        </Style>
+    </UserControl.Styles>
+
+    <Grid Name="m_MainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <!-- Header -->
+        <Grid Name="m_HeaderGrid">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="9*" MinWidth="30" />
+                <ColumnDefinition Width="2" />
+                <ColumnDefinition Width="1*" MinWidth="30" />
+                <ColumnDefinition Width="2" />
+                <ColumnDefinition Width="1*" MinWidth="30" />
+                <ColumnDefinition Width="2" />
+                <ColumnDefinition Width="2*" MinWidth="30" />
+            </Grid.ColumnDefinitions>
+
+            <Border BorderBrush="#32ffffff" BorderThickness="0,0,0,0.5" Grid.Column="0"
+                    Background="Transparent" Padding="5"
+                    PointerEntered="OnHeaderPointerEnter" PointerExited="OnHeaderPointerLeave"
+                    PointerPressed="OnHeaderPointerPressed" PointerReleased="OnHeaderPointerReleased"
+                    Cursor="Hand" Tag="Name" >
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="Name" />
+                    </Grid>
+            </Border>
+
+            <GridSplitter Grid.Column="1" KeyboardNavigation.IsTabStop="False" />
+
+            <Border BorderBrush="#32ffffff" BorderThickness="0,0,0,0.5" Grid.Column="2"
+                    Background="Transparent" Padding="5"
+                    PointerEntered="OnHeaderPointerEnter" PointerExited="OnHeaderPointerLeave"
+                    PointerPressed="OnHeaderPointerPressed" PointerReleased="OnHeaderPointerReleased"
+                    Cursor="Hand" Tag="Size" >
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="Size" />
+                    </Grid>
+            </Border>
+
+            <GridSplitter Grid.Column="3" KeyboardNavigation.IsTabStop="False" />
+
+            <Border BorderBrush="#32ffffff" BorderThickness="0,0,0,0.5" Grid.Column="4"
+                    Background="Transparent" Padding="5"
+                    PointerEntered="OnHeaderPointerEnter" PointerExited="OnHeaderPointerLeave"
+                    PointerPressed="OnHeaderPointerPressed" PointerReleased="OnHeaderPointerReleased"
+                    Cursor="Hand" Tag="Type" >
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="Type" />
+                    </Grid>
+            </Border>
+
+            <GridSplitter Grid.Column="5" KeyboardNavigation.IsTabStop="False" />
+
+            <Border BorderBrush="#32ffffff" BorderThickness="0,0,0,0.5" Grid.Column="6"
+                    Background="Transparent" Padding="5"
+                    PointerEntered="OnHeaderPointerEnter" PointerExited="OnHeaderPointerLeave"
+                    PointerPressed="OnHeaderPointerPressed" PointerReleased="OnHeaderPointerReleased"
+                    Cursor="Hand" Tag="LastModified" >
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock VerticalAlignment="Center" TextTrimming="CharacterEllipsis" Text="Date modified"/>
+                    </Grid>
+            </Border>
+        </Grid>
+
+        <!-- Data -->
+        <ScrollViewer Name="m_ScrollViewer" Grid.Row="1" IsVisible="True"
+                      Focusable="False"
+                      HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <ItemsRepeater Name="m_Items" Focusable="False"
+                           ElementPrepared="OnFilePrepared"
+                           HorizontalCacheLength="0">
+              <ItemsRepeater.ItemTemplate>
+                <DataTemplate>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="{Binding #m_MainGrid.DataContext.NameWidth}" MinWidth="30"/>
+                            <ColumnDefinition Width="2" />
+                            <ColumnDefinition Width="{Binding #m_MainGrid.DataContext.SizeWidth}" MinWidth="30"/>
+                            <ColumnDefinition Width="2" />
+                            <ColumnDefinition Width="{Binding #m_MainGrid.DataContext.TypeWidth}" MinWidth="30"/>
+                            <ColumnDefinition Width="2" />
+                            <ColumnDefinition Width="{Binding #m_MainGrid.DataContext.LastModifiedWidth}" MinWidth="30"/>
+                        </Grid.ColumnDefinitions>
+                        <Border ZIndex="0" Grid.ColumnSpan="7" Background="{Binding Background}"/>
+                        <Grid Margin="5,0,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Image Grid.Column="0" ZIndex="1" Source="{Binding Icon, Converter={StaticResource BitmapValueConverter}, ConverterParameter=16}" Width="16" Height="16" Margin="0,5,0,5" />
+                            <TextBlock Grid.Column="1" ZIndex="1" Text="{Binding File, Converter={StaticResource FileNameConverter}}" Margin="5" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                        </Grid>
+                        <Border Grid.Column="1" BorderBrush="#32ffffff" BorderThickness="1" Width="2" />
+                        <TextBlock ZIndex="1" Text="{Binding File.Size, Converter={StaticResource SizeConverter}}" Grid.Column="2" Margin="5" TextTrimming="CharacterEllipsis" VerticalAlignment="Center" HorizontalAlignment="Right" />
+                        <Border Grid.Column="3" BorderBrush="#32ffffff" BorderThickness="1" Width="2" />
+                        <TextBlock ZIndex="1" Text="{Binding FileMimeType}" Grid.Column="4" Margin="5" TextTrimming="CharacterEllipsis" />
+                        <Border Grid.Column="5" BorderBrush="#32ffffff" BorderThickness="1" Width="2" />
+                        <TextBlock ZIndex="1" Text="{Binding File.LastModified, Converter={StaticResource DateTimeConverter}}" Grid.Column="6" Margin="5" TextTrimming="CharacterEllipsis" VerticalAlignment="Center"/>
+                        <Border ZIndex="2" Grid.ColumnSpan="7"
+                                Background="{Binding SecondaryBackground}"
+                                PointerEntered="OnFilePointerEnter"
+                                PointerExited="OnFilePointerLeave"
+                                DoubleTapped="OnFileDoubleTapped"
+                                PointerPressed="OnFilePointerPressed"
+                                PointerReleased="OnFilePointerReleased" />
+                    </Grid>
+                </DataTemplate>
+              </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
+        </ScrollViewer>
+
+        <ScrollViewer Name="m_IconScrollViewer" Grid.Row="1" IsVisible="False"
+                      Focusable="False"
+                      HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto">
+            <ItemsRepeater Name="m_WrapPanel" Focusable="False"
+                           ElementPrepared="OnFilePrepared"
+                           HorizontalCacheLength="0">
+              <ItemsRepeater.Layout>
+                <UniformGridLayout Orientation="Horizontal"
+                                   MinItemWidth="80"
+                                   MinItemHeight="80"
+                                   MinColumnSpacing="5"
+                                   MinRowSpacing="5"/>
+              </ItemsRepeater.Layout>
+              <ItemsRepeater.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="{Binding Background}"
+                                CornerRadius="5"
+                                Padding="5"
+                                ToolTip.Tip="{Binding File.Name}"
+                                AttachedToVisualTree="OnIconAttachedToVisualTree"
+                                PointerEntered="OnFilePointerEnter"
+                                PointerExited="OnFilePointerLeave"
+                                DoubleTapped="OnFileDoubleTapped"
+                                PointerPressed="OnFilePointerPressed"
+                                PointerReleased="OnFilePointerReleased" >
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <Image Source="{Binding Icon, Converter={StaticResource BitmapValueConverter}, ConverterParameter=32}" Width="32" Height="32" Margin="0,5,0,5" />
+                                <TextBlock Text="{Binding File, Converter={StaticResource FileNameConverter}}"
+                                        TextTrimming="CharacterEllipsis"
+                                        HorizontalAlignment="Center"
+                                        Grid.Row="1"/>
+                                <Border Grid.RowSpan="2" Background="{Binding SecondaryBackground}"
+                                        CornerRadius="5" Margin="-5" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
+        </ScrollViewer>
+
+        <StackPanel Name="m_Wait" Grid.Row="1" IsVisible="False" Orientation="Horizontal" HorizontalAlignment="Center">
+            <i:Icon HorizontalAlignment="Center" VerticalAlignment="Center" Width="40" Height="40" FontSize="32" Value="fas fa-circle-notch" />
+        </StackPanel>
+    </Grid>
+</UserControl>

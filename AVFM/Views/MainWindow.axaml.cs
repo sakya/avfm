@@ -60,7 +60,6 @@ namespace AVFM.Views
                 MaxItems = 3,
                 Margin = Environment.OSVersion.Platform == PlatformID.Win32NT ? new Thickness(0, 30, 0, 0) : new Thickness(0)
             };
-
         }
 
         private Utils.Settings AppSettings

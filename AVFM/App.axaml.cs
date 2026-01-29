@@ -1,16 +1,20 @@
 using System;
 using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Markup.Xaml;
 using AVFM.Views;
 using AVFM.Utils;
 using Avalonia.Platform;
+using Avalonia.Threading;
 
 namespace AVFM
 {
     public class App : Application
     {
+        public readonly CancellationTokenSource CancellationToken = new();
         public static FileManagers.FsFileManager DefaultFsFileManager { get; set; }
         public static string LocalPath { get; set; }
         public static string SettingsPath { get; set; }
@@ -74,5 +78,28 @@ namespace AVFM
             if (!string.IsNullOrEmpty(title))
                 window.Title = $"AVFM - {title}";
         } // SetWindowTitle
+
+        public void Run()
+        {
+            TaskScheduler.UnobservedTaskException += (_, eventArgs) => { LogException(eventArgs.Exception); };
+            try {
+                Dispatcher.UIThread.MainLoop(CancellationToken.Token);
+            } catch (Exception ex) {
+                LogException(ex);
+            }
+        }
+
+        private void LogException(Exception ex)
+        {
+            var lex = ex;
+            while (lex != null) {
+                Console.WriteLine(lex.Message);
+                if (!string.IsNullOrEmpty(lex.StackTrace)) {
+                    Console.WriteLine(lex.StackTrace);
+                }
+
+                lex = lex.InnerException;
+            }
+        }
     }
 }

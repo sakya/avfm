@@ -7,9 +7,9 @@
         xmlns:controls="clr-namespace:AVFM.Controls"
         xmlns:models="clr-namespace:AVFM.Models"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-        WindowStartupLocation="CenterScreen"
         x:Class="AVFM.Views.MainWindow"
-        Title="AVFM">
+        Title="AVFM"
+        WindowStartupLocation="CenterScreen">
     <Panel>
         <ExperimentalAcrylicBorder IsHitTestVisible="False">
             <ExperimentalAcrylicBorder.Material>

@@ -63,6 +63,7 @@ namespace AVFM.Utils
 
         public Settings() {
             Language = "en-US";
+            HomePath = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             SortFolderBeforeFiles = true;
             ShowHiddenFiles = true;
 
@@ -72,7 +73,6 @@ namespace AVFM.Utils
 
             Bookmarks = [];
             Shortcuts = new Dictionary<Shortcut.Shortcuts, Shortcut>();
-
             // Default shortcuts
             SetShortcut(Shortcut.Shortcuts.NewTab, Avalonia.Input.Key.T, Avalonia.Input.KeyModifiers.Control);
             SetShortcut(Shortcut.Shortcuts.CloseTab, Avalonia.Input.Key.W, Avalonia.Input.KeyModifiers.Control);
@@ -108,6 +108,8 @@ namespace AVFM.Utils
         }
 
         public Version Version { get; set; }
+        public string HomePath { get; set; }
+
         public bool ShowDirectoriesBetweenBrackets { get; set; }
         public bool ShowHiddenFiles { get; set; }
         public bool ShowTree { get; set; }
@@ -147,6 +149,13 @@ namespace AVFM.Utils
         {
             return Shortcuts.GetValueOrDefault(type);
         } // GetShortcut
+
+        public string GetHomePath()
+        {
+            if (!string.IsNullOrEmpty(HomePath))
+                return HomePath;
+            return  Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        }
 
         public static Settings Load(string path)
         {

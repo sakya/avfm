@@ -535,7 +535,7 @@ namespace AVFM.Controls
                     break;
                 case Key.Back:
                     args.Handled = true;
-                    var up = m_Files.Where(f => f.File.Name == "..").FirstOrDefault();
+                    var up = m_Files.FirstOrDefault(f => f.File.Name == "..");
                     if (up != null)
                         FileTriggered?.Invoke(this, new FileTriggeredEventArgs(new List<FileManagers.FileInfo>() { up.File }));
                     break;
@@ -667,7 +667,7 @@ namespace AVFM.Controls
 
             m_CurrentRow = null;
             if (selectedFile != null)
-                m_CurrentRow = m_Files.Where(f => f.File.FullPath == selectedFile).FirstOrDefault();
+                m_CurrentRow = m_Files.FirstOrDefault(f => f.File.FullPath == selectedFile);
             if (m_CurrentRow == null)
                 m_CurrentRow = m_Files.Count > 0 ? m_Files[0] : null;
 

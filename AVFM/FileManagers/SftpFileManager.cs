@@ -81,7 +81,7 @@ namespace AVFM.FileManagers
                 if (path != null) {
                     if (!string.IsNullOrEmpty(res) && !res.EndsWith(GetPathSeparator()) && !path.StartsWith(GetPathSeparator()))
                         res = $"{res}{GetPathSeparator()}{path}";
-                    else 
+                    else
                         res = $"{res}{path}";
                 }
             }
@@ -189,8 +189,8 @@ namespace AVFM.FileManagers
         {
             path = GetPath(path);
             return Task.FromResult(new DriveInfo() {
-                Name = $"sftp://{Host}/",       
-                VolumeLabel = Host  
+                Name = $"sftp://{Host}/",
+                VolumeLabel = Host
             });
         } // GetDriveInfo
 
@@ -214,7 +214,7 @@ namespace AVFM.FileManagers
                     LastModified = f.Attributes.LastWriteTime,
                     Created = DateTime.MinValue,
                     IsDirectory = f.IsDirectory
-                };                
+                };
             }
         } // GetFileInfo
 
@@ -245,7 +245,7 @@ namespace AVFM.FileManagers
 
                     if (fi.IsDirectory)
                         fi.Type = DirectoryMimeType;
-                    res.Add(fi);                    
+                    res.Add(fi);
                 }
             }
             return res;
@@ -331,7 +331,7 @@ namespace AVFM.FileManagers
                     res = new Client(ftpClient);
                     m_Clients.Add(res);
                 } else {
-                    res = m_Clients.Where(c => !c.IsBusy).FirstOrDefault();
+                    res = m_Clients.FirstOrDefault(c => !c.IsBusy);
                 }
 
                 if (res != null) {
@@ -343,7 +343,7 @@ namespace AVFM.FileManagers
                 if (res == null)
                     await Task.Delay(10);
             }
-  
+
             return res;
         } // GetClient
 
@@ -353,6 +353,6 @@ namespace AVFM.FileManagers
                 return position.Remove(0, $"sftp://{Host}".Length);
             }
             return position;
-        } // GetPath           
+        } // GetPath
     }
 }

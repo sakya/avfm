@@ -126,8 +126,8 @@ namespace AVFM.Controls
             var items = m_Items;
             idx = 0;
             foreach (var path in paths) {
-                var node = items.Where(i => string.Compare(i.File.FullPath, path, StringComparison) == 0)
-                    .FirstOrDefault();
+                var node = items
+                    .FirstOrDefault(i => string.Compare(i.File.FullPath, path, StringComparison) == 0);
                 if (node != null) {
                     node.IsExpanded = true;
                     if (idx == paths.Count - 1 && m_SelectedPath == position)

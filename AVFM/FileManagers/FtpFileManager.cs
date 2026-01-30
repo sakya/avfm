@@ -81,7 +81,7 @@ namespace AVFM.FileManagers
         {
             await m_ClientsSema.WaitAsync();
             try {
-                var client = m_Clients.Where(c => c.OpenedStream == stream).FirstOrDefault();
+                var client = m_Clients.FirstOrDefault(c => c.OpenedStream == stream);
                 await Task.Run(() => client.Ftp.GetReply());
                 client.OpenedStream = null;
                 client.IsBusy = false;
@@ -333,11 +333,11 @@ namespace AVFM.FileManagers
                         SslProtocols = SslProtocols,
                         ValidateAnyCertificate = true,
                     });
-                    
+
                     res = new Client(ftpClient);
                     m_Clients.Add(res);
                 } else {
-                    res = m_Clients.Where(c => !c.IsBusy && c.OpenedStream == null).FirstOrDefault();
+                    res = m_Clients.FirstOrDefault(c => !c.IsBusy && c.OpenedStream == null);
                 }
 
                 if (res != null) {

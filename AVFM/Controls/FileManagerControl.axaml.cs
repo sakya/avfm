@@ -258,11 +258,12 @@ namespace AVFM.Controls
 
             // Address
             if (m_PositionTextBox.IsKeyboardFocusWithin) {
-                args.Handled = true;
                 if (args.Key == Key.Return && !string.IsNullOrEmpty(m_PositionTextBox.Text)) {
+                    args.Handled = true;
                     await SetPosition(m_PositionTextBox.Text, true);
                     m_FileListing.Focus();
                 }
+                return;
             }
 
             // Filtering
@@ -302,7 +303,7 @@ namespace AVFM.Controls
 
         private async void OnUpClicked(object sender, RoutedEventArgs args)
         {
-            var up = Files.Where(f => f.Name == "..").FirstOrDefault();
+            var up = Files.FirstOrDefault(f => f.Name == "..");
             if (up != null) {
                 await SetPosition(up.FullPath, true, Position);
             }
@@ -310,7 +311,7 @@ namespace AVFM.Controls
 
         private async void OnHomeClicked(object sender, RoutedEventArgs args)
         {
-            await SetPosition(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), true, null, false);
+            await SetPosition(AppSettings.GetHomePath(), true, null, false);
         } // OnHomeClicked
 
         private async void OnGoBackClicked(object sender, RoutedEventArgs args)
@@ -363,14 +364,7 @@ namespace AVFM.Controls
 
         private async void OnPositionChanged(object sender)
         {
-            if (m_PositionTextBox.Text.EndsWith(m_FileManager.GetPathSeparator())) {
-                try {
-                    var dirs = await m_FileManager.GetDirectoryList(m_PositionTextBox.Text);
-                    m_PositionTextBox.ItemsSource = dirs.OrderBy(f => f.FullPath);
-                } catch {
-                    m_PositionTextBox.ItemsSource = null;
-                }
-            }
+
         } // OnPositionChanged
 
         private void OnFilterChanged(object sender)
@@ -534,7 +528,7 @@ namespace AVFM.Controls
                 await ShowError(null, ex);
             } finally {
                 m_RefreshSema.Release();
-                m_GoUp.IsEnabled = Files.Where(f => f.Name == "..").FirstOrDefault() != null;
+                m_GoUp.IsEnabled = Files.FirstOrDefault(f => f.Name == "..") != null;
                 m_FileListing.ShowWait = false;
             }
             return true;

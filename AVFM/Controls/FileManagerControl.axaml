@@ -32,9 +32,9 @@
         <Button Name="m_GoUp" Click="OnUpClicked" Height="32" Focusable="False" i:Attached.Icon="fas fa-arrow-up" />
         <Button Click="OnHomeClicked" Margin="5,0,0,0" Height="32" Focusable="False" i:Attached.Icon="fas fa-home" ToolTip.Tip="{i18n:Localize Home}" />
       </StackPanel>
-      <AutoCompleteBox Name="m_PositionTextBox" Grid.Column="1" VerticalAlignment="Center"
-                       FilterMode="StartsWith"
-                       ValueMemberBinding="{Binding FullPath}" />
+
+      <TextBox Name="m_PositionTextBox" Grid.Column="1" VerticalAlignment="Center" Text="{Binding FullPath}" />
+
       <Button Click="OnRefreshClicked" Grid.Column="2" Height="32" Focusable="False" i:Attached.Icon="fas fa-redo-alt" ToolTip.Tip="{i18n:Localize Refresh}" />
       <Button Click="OnRootClicked" Grid.Column="3" Height="32" Focusable="False" ToolTip.Tip="{i18n:Localize Root}">
         <i:Icon Value="fas fa-minus">

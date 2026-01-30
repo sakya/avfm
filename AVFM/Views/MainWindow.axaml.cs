@@ -46,8 +46,8 @@ namespace AVFM.Views
                         tasks.Add(AddNewTab( t.TabPosition == Utils.Settings.OpenedTab.TabPositions.Left ? m_LeftTabControl : m_RightTabControl, t.Position, t.ViewMode));
                     }
                 } else {
-                    tasks.Add(AddNewTab(m_LeftTabControl, Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)));
-                    tasks.Add(AddNewTab(m_RightTabControl, Environment.GetFolderPath(Environment.SpecialFolder.UserProfile)));
+                    tasks.Add(AddNewTab(m_LeftTabControl, AppSettings.GetHomePath()));
+                    tasks.Add(AddNewTab(m_RightTabControl, AppSettings.GetHomePath()));
                 }
                 await Task.WhenAll(tasks.ToArray());
                 SetShowHiddenFiles(AppSettings.ShowHiddenFiles);

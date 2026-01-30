@@ -7,6 +7,7 @@ using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Interactivity;
 using Avalonia.Controls.Notifications;
+using AVFM.Controls;
 using AVFM.Models;
 
 namespace AVFM.Views
@@ -20,7 +21,7 @@ namespace AVFM.Views
             public KeyGesture CreateFolderGesture { get; set; }
         }
 
-        private Controls.FileManagerControl m_ActiveFileManager = null;
+        private FileManagerControl m_ActiveFileManager = null;
         private readonly WindowNotificationManager m_NotificationManager = null;
         private TabItem m_ClickedTab = null;
 
@@ -29,7 +30,7 @@ namespace AVFM.Views
             InitializeComponent();
             App.SetWindowTitle(this);
 
-            this.Closing += OnWindowClosing;
+            Closing += OnWindowClosing;
 
             m_MainMenu.DataContext = new MenuContext() {
                 NewTabGesture = AppSettings.GetShortcut(Utils.Settings.Shortcut.Shortcuts.NewTab)?.InputGesture,
@@ -75,11 +76,11 @@ namespace AVFM.Views
                 var tabControl = Utils.Utils.FindParent<TabControl>(m_ActiveFileManager);
                 if (tabControl == m_LeftTabControl) {
                     var ti = m_RightTabControl.SelectedItem as TabItem;
-                    var fm = ti.Content as Controls.FileManagerControl;
+                    var fm = ti.Content as FileManagerControl;
                     fm.IsActive = true;
                 } else if (tabControl == m_RightTabControl) {
                     var ti = m_LeftTabControl.SelectedItem as TabItem;
-                    var fm = ti.Content as Controls.FileManagerControl;
+                    var fm = ti.Content as FileManagerControl;
                     fm.IsActive = true;
                 }
             } else {
@@ -106,24 +107,27 @@ namespace AVFM.Views
             }
         } // OnKeyDown
 
-        private async Task<bool> AddNewTab(TabControl tabControl, string position, Controls.FileListingControl.ViewModes viewMode = Controls.FileListingControl.ViewModes.List)
+        private async Task<bool> AddNewTab(
+            TabControl tabControl,
+            string position,
+            FileListingControl.ViewModes viewMode = FileListingControl.ViewModes.List)
         {
             if (tabControl.ItemsSource == null)
                 tabControl.ItemsSource = new Avalonia.Collections.AvaloniaList<object>();
             var items = tabControl.ItemsSource as Avalonia.Collections.AvaloniaList<object>;
 
-            var fm = new Controls.FileManagerControl();
+            var fm = new FileManagerControl();
             fm.ViewMode = viewMode;
             fm.ShowHiddenFiles = AppSettings.ShowHiddenFiles;
             fm.Tag = position;
             fm.AttachedToVisualTree += OnFileManagerAttachedToVisualTree;
             fm.GotFocus += OnFileManagerGotFocus;
             fm.IsActiveChanged += (sender, args) => {
-                if ((sender as Controls.FileManagerControl).IsActive)
+                if ((sender as FileManagerControl).IsActive)
                     OnFileManagerGotFocus(sender, null);
             };
             fm.PositionChanged += async (sender, args) => {
-                var sfm = sender as Controls.FileManagerControl;
+                var sfm = sender as FileManagerControl;
                 (sfm.Parent as TabItem).Header = new TabItemHeader(sfm.PositionName, sfm.GetBookmark().Icon);
                 await m_Tree.Set(sfm, args.NewPosition);
             };
@@ -172,7 +176,7 @@ namespace AVFM.Views
             if (ti == null)
                 return;
 
-            var fm = ti.Content as Controls.FileManagerControl;
+            var fm = ti.Content as FileManagerControl;
             if (fm.Tag == null) {
                 fm.Tag = fm.Position;
                 m_ActiveFileManager = null;
@@ -181,7 +185,7 @@ namespace AVFM.Views
 
         private async void OnFileManagerAttachedToVisualTree(object sender, VisualTreeAttachmentEventArgs args)
         {
-            var fm = sender as Controls.FileManagerControl;
+            var fm = sender as FileManagerControl;
             if (fm.Tag != null) {
                 var initialPosition = (string)fm.Tag;
                 await fm.SetPosition(initialPosition);
@@ -195,7 +199,7 @@ namespace AVFM.Views
 
         private async void OnFileManagerGotFocus(object sender, GotFocusEventArgs args)
         {
-            m_ActiveFileManager = sender as Controls.FileManagerControl;
+            m_ActiveFileManager = sender as FileManagerControl;
             m_ActiveFileManager.IsActive = true;
             SetToggleIcons();
             if (m_ActiveFileManager.FileManager != null) {
@@ -206,44 +210,44 @@ namespace AVFM.Views
             }
         } // OnFileManagerGotFocus
 
-        private async void OnFileCopyRequest(object sender, Controls.FileListingControl.FileTriggeredEventArgs args)
+        private async void OnFileCopyRequest(object sender, FileListingControl.FileTriggeredEventArgs args)
         {
-            var sourceCtrl = sender as Controls.FileManagerControl;
+            var sourceCtrl = sender as FileManagerControl;
             var tc = Utils.Utils.FindParent<TabControl>(sourceCtrl);
             TabControl otherTc = m_LeftTabControl;
             if (tc == m_LeftTabControl)
                 otherTc = m_RightTabControl;
 
-            var destCtrl = (otherTc.SelectedItem as TabItem).Content as Controls.FileManagerControl;
+            var destCtrl = (otherTc.SelectedItem as TabItem).Content as FileManagerControl;
             var sourceFm = sourceCtrl.FileManager;
             var destFm = destCtrl.FileManager;
 
-            if (!AppSettings.ConfirmCopy || await Views.MessageWindow.ShowConfirmMessage((Window)this.VisualRoot, Localizer.Localizer.Instance["Confirm"], string.Format(Localizer.Localizer.Instance["ConfirmCopy"], destCtrl.Position))) {
+            if (!AppSettings.ConfirmCopy || await Views.MessageWindow.ShowConfirmMessage((Window)VisualRoot, Localizer.Localizer.Instance["Confirm"], string.Format(Localizer.Localizer.Instance["ConfirmCopy"], destCtrl.Position))) {
                 var dlg = new Views.FileOperationWindow();
                 dlg.SetFileCopy(sourceCtrl.Position, sourceFm, destCtrl.Position, destFm, args.Files);
-                var task = dlg.ShowDialog((Window)this.VisualRoot);
+                var task = dlg.ShowDialog((Window)VisualRoot);
                 dlg.Start();
                 await task;
                 destCtrl.RefreshPosition();
             }
         } // OnFileCopyRequest
 
-        private async void OnFileMoveRequest(object sender, Controls.FileListingControl.FileTriggeredEventArgs args)
+        private async void OnFileMoveRequest(object sender, FileListingControl.FileTriggeredEventArgs args)
         {
-            var sourceCtrl = sender as Controls.FileManagerControl;
+            var sourceCtrl = sender as FileManagerControl;
             var tc = Utils.Utils.FindParent<TabControl>(sourceCtrl);
             TabControl otherTc = m_LeftTabControl;
             if (tc == m_LeftTabControl)
                 otherTc = m_RightTabControl;
 
-            var destCtrl = (otherTc.SelectedItem as TabItem).Content as Controls.FileManagerControl;
+            var destCtrl = (otherTc.SelectedItem as TabItem).Content as FileManagerControl;
             var sourceFm = sourceCtrl.FileManager;
             var destFm = destCtrl.FileManager;
 
-            if (!AppSettings.ConfirmMove || await Views.MessageWindow.ShowConfirmMessage((Window)this.VisualRoot, Localizer.Localizer.Instance["Confirm"], string.Format(Localizer.Localizer.Instance["ConfirmMove"], destCtrl.Position))) {
+            if (!AppSettings.ConfirmMove || await Views.MessageWindow.ShowConfirmMessage((Window)VisualRoot, Localizer.Localizer.Instance["Confirm"], string.Format(Localizer.Localizer.Instance["ConfirmMove"], destCtrl.Position))) {
                 var dlg = new Views.FileOperationWindow();
                 dlg.SetFileMove(sourceCtrl.Position, sourceFm, destFm, destCtrl.Position, args.Files);
-                var task = dlg.ShowDialog((Window)this.VisualRoot);
+                var task = dlg.ShowDialog((Window)VisualRoot);
                 dlg.Start();
                 await task;
                 sourceCtrl.RefreshPosition();
@@ -251,7 +255,7 @@ namespace AVFM.Views
             }
         } // OnFileMoveRequest
 
-        private void SetTreeVisibility(bool visible)
+        private async void SetTreeVisibility(bool visible)
         {
             AppSettings.ShowTree = visible;
             m_ShowTreeMenu.IsChecked = visible;
@@ -268,6 +272,7 @@ namespace AVFM.Views
                 m_InnerGrid.ColumnDefinitions[1].Width = GridLength.Auto;
 
                 m_LeftTabControl.Margin = new Thickness(0, 0, 0, 0);
+                await m_Tree.Set(m_ActiveFileManager, m_ActiveFileManager.Position);
             }
             m_Tree.IsVisible = visible;
             m_GridSplitter.IsVisible = visible;
@@ -282,7 +287,7 @@ namespace AVFM.Views
             foreach(var tab in tabs) {
                 foreach (var i in tab.Items) {
                     var ti = i as TabItem;
-                    var fm = ti.Content as Controls.FileManagerControl;
+                    var fm = ti.Content as FileManagerControl;
                     fm.ShowHiddenFiles = show;
                 }
             }
@@ -303,20 +308,19 @@ namespace AVFM.Views
                     settings.OpenedTabs.Add(new Utils.Settings.OpenedTab()
                     {
                         TabPosition = Utils.Settings.OpenedTab.TabPositions.Left,
-                        ViewMode = (ti.Content as Controls.FileManagerControl).ViewMode,
-                        Position = (ti.Content as Controls.FileManagerControl).GetBookmark().GetPosition()
+                        ViewMode = (ti.Content as FileManagerControl).ViewMode,
+                        Position = (ti.Content as FileManagerControl).GetBookmark().GetPosition()
                     });
                 }
 
                 items = m_RightTabControl.ItemsSource as Avalonia.Collections.AvaloniaList<object>;
-                foreach (var item in items)
-                {
+                foreach (var item in items) {
                     var ti = item as TabItem;
                     settings.OpenedTabs.Add(new Utils.Settings.OpenedTab()
                     {
                         TabPosition = Utils.Settings.OpenedTab.TabPositions.Right,
-                        ViewMode = (ti.Content as Controls.FileManagerControl).ViewMode,
-                        Position = (ti.Content as Controls.FileManagerControl).GetBookmark().GetPosition()
+                        ViewMode = (ti.Content as FileManagerControl).ViewMode,
+                        Position = (ti.Content as FileManagerControl).GetBookmark().GetPosition()
                     });
                 }
             }
@@ -344,7 +348,7 @@ namespace AVFM.Views
 
         private void SetToggleIcons()
         {
-            if (m_ActiveFileManager.ViewMode == Controls.FileListingControl.ViewModes.List) {
+            if (m_ActiveFileManager.ViewMode == FileListingControl.ViewModes.List) {
                 Projektanker.Icons.Avalonia.Attached.SetIcon(m_ToggleViewBtn, "fas fa-th-list");
                 m_ViewListMenu.IsChecked = true;
             } else {
@@ -372,27 +376,27 @@ namespace AVFM.Views
 
         private void OnExitClicked(object sender, RoutedEventArgs args)
         {
-            this.Close();
+            Close();
         } // OnExitClicked
 
         private void OnShowHiddenFilesChanged(object sender, RoutedEventArgs args)
         {
-            SetShowHiddenFiles((sender as Controls.CheckableMenuItem).IsChecked);
+            SetShowHiddenFiles((sender as CheckableMenuItem).IsChecked);
         } // OnShowHiddenFilesChanged
 
         private void OnShowTreeChanged(object sender, RoutedEventArgs args)
         {
-            SetTreeVisibility((sender as Controls.CheckableMenuItem).IsChecked);
+            SetTreeVisibility((sender as CheckableMenuItem).IsChecked);
         } // OnShowTreeChanged
 
         private void OnViewModeChanged(object sender, RoutedEventArgs args)
         {
-            var mi = (Controls.CheckableMenuItem)sender;
+            var mi = (CheckableMenuItem)sender;
             if (mi.IsChecked) {
                 if ((string)mi.Tag == "List")
-                    m_ActiveFileManager.ViewMode = Controls.FileListingControl.ViewModes.List;
+                    m_ActiveFileManager.ViewMode = FileListingControl.ViewModes.List;
                 else
-                    m_ActiveFileManager.ViewMode = Controls.FileListingControl.ViewModes.Icon;
+                    m_ActiveFileManager.ViewMode = FileListingControl.ViewModes.Icon;
                 SetToggleIcons();
             }
         } // OnViewModeChanged
@@ -407,10 +411,10 @@ namespace AVFM.Views
 
         private void OnToggleViewClicked(object sender, RoutedEventArgs args)
         {
-            if (m_ActiveFileManager.ViewMode == Controls.FileListingControl.ViewModes.List) {
-                m_ActiveFileManager.ViewMode = Controls.FileListingControl.ViewModes.Icon;
+            if (m_ActiveFileManager.ViewMode == FileListingControl.ViewModes.List) {
+                m_ActiveFileManager.ViewMode = FileListingControl.ViewModes.Icon;
             } else {
-                m_ActiveFileManager.ViewMode = Controls.FileListingControl.ViewModes.List;
+                m_ActiveFileManager.ViewMode = FileListingControl.ViewModes.List;
             }
             SetToggleIcons();
         } // OnToggleViewClicked

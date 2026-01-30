@@ -163,7 +163,7 @@ namespace AVFM.Controls
             public SortOrder Order { get; set; }
         }
 
-        class Context : Utils.ContextBase
+        private class Context : Utils.ContextBase
         {
             private GridLength m_NameWidth;
             private GridLength m_SizeWidth;
@@ -195,7 +195,7 @@ namespace AVFM.Controls
             }
         } // Context
 
-        class FileItem : Utils.ContextBase
+        private class FileItem : Utils.ContextBase
         {
             private SolidColorBrush m_Background = new SolidColorBrush(Colors.Transparent);
             private SolidColorBrush m_SecondaryBackground = new SolidColorBrush(Colors.Transparent);

@@ -1,7 +1,6 @@
 using System;
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Markup.Xaml;
 using Avalonia.Styling;
 using Avalonia.Interactivity;
 namespace AVFM.Controls
@@ -13,12 +12,12 @@ namespace AVFM.Controls
             InitializeComponent();
 
             if (string.IsNullOrEmpty(Group)) {
-                this.Icon = new Projektanker.Icons.Avalonia.Icon()
+                Icon = new Projektanker.Icons.Avalonia.Icon()
                 {
                     Value = "far fa-square"
                 };
             } else {
-                this.Icon = new Projektanker.Icons.Avalonia.Icon();
+                Icon = new Projektanker.Icons.Avalonia.Icon();
             }
         } // CheckableMenuItem
 
@@ -29,7 +28,7 @@ namespace AVFM.Controls
                 (o, v) => o.IsChecked = v);
 
         Type IStyleable.StyleKey => typeof(MenuItem);
-        private bool m_IsChecked = false;
+        private bool m_IsChecked;
         private string m_Group = string.Empty;
 
         public event EventHandler<RoutedEventArgs> IsCheckedChanged;
@@ -63,22 +62,20 @@ namespace AVFM.Controls
         private void OnClicked(object sender, RoutedEventArgs args)
         {
             if (!HasGroup) {
-                this.IsChecked = !this.IsChecked;
-            } else if (!this.IsChecked)
-                this.IsChecked = true;
+                IsChecked = !IsChecked;
+            } else if (!IsChecked)
+                IsChecked = true;
         } // OnClicked
 
         private void OnIsCheckedChanged()
         {
             if (HasGroup) {
-                if (!this.IsChecked)
+                if (!IsChecked)
                     return;
 
-                var pi = this.Parent as MenuItem;
-                if (pi != null) {
+                if (Parent is MenuItem pi) {
                     foreach (var i in pi.Items) {
-                        var mi = i as CheckableMenuItem;
-                        if (mi != null && mi.Group == this.Group) {
+                        if (i is CheckableMenuItem mi && mi.Group == Group) {
                             mi.IsChecked = mi == this;
                         }
                     }
@@ -91,14 +88,14 @@ namespace AVFM.Controls
 
         private void SetIcon()
         {
-            string icon = string.Empty;
+            string icon;
             if (m_IsChecked)
                 icon = HasGroup ? "far fa-dot-circle" : "fas fa-check-square";
             else
                 icon = HasGroup ? "far fa-circle" : "far fa-square";
 
-            if (this.Icon == null || (this.Icon as Projektanker.Icons.Avalonia.Icon).Value != icon) {
-                this.Icon = new Projektanker.Icons.Avalonia.Icon()
+            if (Icon == null || (Icon as Projektanker.Icons.Avalonia.Icon)?.Value != icon) {
+                Icon = new Projektanker.Icons.Avalonia.Icon()
                 {
                     Value = icon
                 };

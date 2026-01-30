@@ -283,7 +283,6 @@ namespace AVFM.Controls
         #region Events
         private void OnIsActiveChanged()
         {
-            //m_FileListing.Background = IsActive ? ActiveColor : new SolidColorBrush(Colors.Transparent);
             m_FileListing.Background = IsActive ? new SolidColorBrush(Colors.Transparent) : InactiveColor;
             if (IsActive) {
                 foreach (var fm in ((Window)VisualRoot).GetVisualDescendants().OfType<Controls.FileManagerControl>()) {

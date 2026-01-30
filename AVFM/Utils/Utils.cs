@@ -34,7 +34,7 @@ namespace AVFM.Utils
         private static Dictionary<string, string> m_MimeTypes = null;
         public static string FormatFileName(FileManagers.FileInfo fi)
         {
-            if (fi.IsDirectory && ((App)App.Current).Settings.ShowDirectoriesBewteenBrackets)
+            if (fi.IsDirectory && ((App)App.Current).Settings.ShowDirectoriesBetweenBrackets)
                 return $"[{fi.Name}]";
             return fi.Name;
         } // FormatFileName

@@ -16,7 +16,7 @@ namespace AVFM.Controls
 {
     public partial class FileManagerControl : UserControl
     {
-        class History {
+        private class History {
             public History()
             {
                 Positions = new List<string>();
@@ -87,6 +87,7 @@ namespace AVFM.Controls
         {
             InitializeComponent();
 
+            m_FileListing.Background = InactiveColor;
             m_FileListing.FileTriggered += async (sender, args) =>
             {
                 if (args.Files.Count == 1 && args.Files[0].IsDirectory) {
@@ -285,7 +286,7 @@ namespace AVFM.Controls
         {
             m_FileListing.Background = IsActive ? new SolidColorBrush(Colors.Transparent) : InactiveColor;
             if (IsActive) {
-                foreach (var fm in ((Window)VisualRoot).GetVisualDescendants().OfType<Controls.FileManagerControl>()) {
+                foreach (var fm in ((Window)VisualRoot).GetVisualDescendants().OfType<FileManagerControl>()) {
                     if (fm != this)
                         fm.IsActive = false;
                 }

@@ -6,7 +6,7 @@ using System;
 
 namespace AVFM.Utils
 {
-    public class Settings 
+    public class Settings
     {
         public enum FilterTypes
         {
@@ -14,11 +14,11 @@ namespace AVFM.Utils
             Contains,
             Regex
         }
-        
+
         #region classes
-        public class OpenedTab 
+        public class OpenedTab
         {
-            public enum TabPositions 
+            public enum TabPositions
             {
                 Left,
                 Right,
@@ -29,9 +29,9 @@ namespace AVFM.Utils
             public string Position { get; set; }
         } // OpenedTab
 
-        public class Shortcut 
+        public class Shortcut
         {
-            public enum Shortcuts 
+            public enum Shortcuts
             {
                 NewTab,
                 CloseTab,
@@ -40,7 +40,7 @@ namespace AVFM.Utils
                 GoForward,
                 GoHome,
                 GoUp,
-                
+
                 Refresh,
                 SelectFile,
                 SelectAllFiles,
@@ -49,20 +49,16 @@ namespace AVFM.Utils
                 ViewFile,
                 RenameFile,
                 CopyFile,
-                MoveFile, 
-                DeleteFile,               
+                MoveFile,
+                DeleteFile,
             }
             public Shortcuts Type { get; set; }
             public Avalonia.Input.Key Key { get; set; }
             public Avalonia.Input.KeyModifiers KeyModifiers { get; set; }
 
             [JsonIgnore]
-            public Avalonia.Input.KeyGesture InputGesture {
-                get {
-                    return new Avalonia.Input.KeyGesture(Key, KeyModifiers);
-                }
-            }
-        } // Shortcut    
+            public Avalonia.Input.KeyGesture InputGesture => new(Key, KeyModifiers);
+        } // Shortcut
         #endregion
 
         public Settings() {
@@ -73,8 +69,8 @@ namespace AVFM.Utils
             ConfirmCopy = true;
             ConfirmDelete = true;
             ConfirmMove = true;
-            
-            Bookmarks = new List<FileManagers.FileManagerBase.Bookmark>();
+
+            Bookmarks = [];
             Shortcuts = new Dictionary<Shortcut.Shortcuts, Shortcut>();
 
             // Default shortcuts
@@ -97,7 +93,7 @@ namespace AVFM.Utils
             SetShortcut(Shortcut.Shortcuts.MoveFile, Avalonia.Input.Key.F6, Avalonia.Input.KeyModifiers.None);
             SetShortcut(Shortcut.Shortcuts.DeleteFile, Avalonia.Input.Key.Delete, Avalonia.Input.KeyModifiers.None);
         }
-        
+
         public string Language { get; set; }
 
         [JsonIgnore]
@@ -112,7 +108,7 @@ namespace AVFM.Utils
         }
 
         public Version Version { get; set; }
-        public bool ShowDirectoriesBewteenBrackets { get; set; }
+        public bool ShowDirectoriesBetweenBrackets { get; set; }
         public bool ShowHiddenFiles { get; set; }
         public bool ShowTree { get; set; }
         public bool SortFolderBeforeFiles { get; set; }
@@ -133,7 +129,7 @@ namespace AVFM.Utils
             Shortcuts[type] = new Shortcut() {
                 Type = type,
                 Key = key,
-                KeyModifiers = modifier                
+                KeyModifiers = modifier
             };
         } // SetShortcut
 
@@ -143,34 +139,29 @@ namespace AVFM.Utils
                 if (args.KeyModifiers == kvp.Value.KeyModifiers && args.Key == kvp.Value.Key) {
                     return kvp.Value;
                 }
-            }             
+            }
             return null;
         } // GetShortcut
 
         public Shortcut GetShortcut(Shortcut.Shortcuts type)
         {
-            Shortcut res;
-            if (Shortcuts.TryGetValue(type, out res))
-                return res;
-            return null;
+            return Shortcuts.GetValueOrDefault(type);
         } // GetShortcut
 
         public static Settings Load(string path)
         {
-            using (StreamReader sr = new StreamReader(path)) {
-                var settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Objects };
-                return JsonConvert.DeserializeObject<Settings>(sr.ReadToEnd(), settings);
-            }
+            using var sr = new StreamReader(path);
+            var settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Objects };
+            return JsonConvert.DeserializeObject<Settings>(sr.ReadToEnd(), settings);
         } // Load
 
         public void Save(string path)
         {
-            using (StreamWriter sw = new StreamWriter(path)) {
-                Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
-                
-                var settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Objects };
-                sw.Write(JsonConvert.SerializeObject(this, Formatting.Indented, settings));
-            }
-        } // Save        
+            using var sw = new StreamWriter(path);
+            Version = System.Reflection.Assembly.GetExecutingAssembly().GetName().Version;
+
+            var settings = new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.Objects };
+            sw.Write(JsonConvert.SerializeObject(this, Formatting.Indented, settings));
+        } // Save
     }
 }

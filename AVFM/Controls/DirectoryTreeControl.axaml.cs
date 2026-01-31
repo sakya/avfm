@@ -91,14 +91,20 @@ namespace AVFM.Controls
                     Root = m_FileManager.GetRoot();
                     var root = new FileManagers.FileInfo()
                     {
-                        Name = string.IsNullOrEmpty(drive.VolumeLabel) ? drive.Name : $"{drive.VolumeLabel} ({drive.Name})",
                         FullPath = drive.Name,
                         IsDirectory = true,
                         Type = FileManagers.FileManagerBase.DirectoryMimeType
                     };
 
-                    if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+                    if (Environment.OSVersion.Platform == PlatformID.Win32NT) {
                         root.Type = FileManagers.FileManagerBase.WindowsDriveMimeType;
+                        root.Name = string.IsNullOrEmpty(drive.VolumeLabel)
+                            ? drive.Name
+                            : $"{drive.VolumeLabel} ({drive.Name})";
+                    } else {
+                        root.Name = drive.VolumeLabel ?? drive.Name;
+                    }
+
                     m_Items.Add(await GetTreeItem(root));
                 }
             }

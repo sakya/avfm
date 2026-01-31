@@ -272,7 +272,8 @@ namespace AVFM.Views
                 m_InnerGrid.ColumnDefinitions[1].Width = GridLength.Auto;
 
                 m_LeftTabControl.Margin = new Thickness(0, 0, 0, 0);
-                await m_Tree.Set(m_ActiveFileManager, m_ActiveFileManager.Position);
+                if (m_ActiveFileManager != null)
+                    await m_Tree.Set(m_ActiveFileManager, m_ActiveFileManager.Position);
             }
             m_Tree.IsVisible = visible;
             m_GridSplitter.IsVisible = visible;

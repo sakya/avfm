@@ -3,15 +3,15 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Avalonia.Controls;
 using System.Threading.Tasks;
-using Avalonia.Markup.Xaml;
 using Avalonia.Input;
 using System.Linq;
+using Avalonia;
 
 namespace AVFM.Controls
 {
     public partial class DirectoryTreeControl : UserControl
     {
-        class TreeItem : Utils.ContextBase
+        private class TreeItem : Utils.ContextBase
         {
             private bool m_Expanded = false;
             public TreeItem(FileManagers.FileInfo file)
@@ -24,15 +24,15 @@ namespace AVFM.Controls
             public string Icon { get; set; }
             public ObservableCollection<TreeItem> Children { get; set;}
             public bool IsExpanded {
-                get { return m_Expanded; }
-                set { SetIfChanged(ref m_Expanded, value); }
+                get => m_Expanded;
+                set => SetIfChanged(ref m_Expanded, value);
             }
 
             public bool Loaded { get; set; }
         } // TreeItem
 
         private string m_SelectedPath = null;
-        private Controls.FileManagerControl m_FileManagerControl = null;
+        private FileManagerControl m_FileManagerControl = null;
         private FileManagers.FileManagerBase m_FileManager = null;
         private ObservableCollection<TreeItem> m_Items = new ObservableCollection<TreeItem>();
         private bool m_LoadingItems = false;
@@ -51,10 +51,7 @@ namespace AVFM.Controls
             private set;
         }
 
-        private Utils.Settings AppSettings
-        {
-            get { return ((App)App.Current).Settings; }
-        }
+        private Utils.Settings AppSettings => ((App)Application.Current)?.Settings;
 
         private StringComparison StringComparison
         {
@@ -69,16 +66,22 @@ namespace AVFM.Controls
         public string SelectedPath
         {
             get {
-                var node = m_Tree.SelectedItem as TreeItem;
-                if (node != null)
+                if (m_Tree.SelectedItem is TreeItem node)
                     return node.File.FullPath;
                 return null;
             }
         }
 
-        public async Task<bool> Set(Controls.FileManagerControl fileManagerControl, string position)
+        public async Task Reload()
         {
-            if (!this.IsVisible)
+            m_Items.Clear();
+            m_FileManager = null;
+            await Set(m_FileManagerControl, m_SelectedPath);
+        }
+
+        public async Task<bool> Set(FileManagerControl fileManagerControl, string position)
+        {
+            if (!IsVisible || fileManagerControl == null)
                 return false;
 
             m_FileManagerControl = fileManagerControl;
@@ -118,13 +121,13 @@ namespace AVFM.Controls
             m_SelectedPath = position;
 
             var drive = await m_FileManager.GetDriveInfo(position);
-            List<string> paths = new List<string>() { drive.Name };
-            int idx = position.IndexOf(m_FileManager.GetPathSeparator(), drive.Name.Length);
+            var paths = new List<string>() { drive.Name };
+            var idx = position.IndexOf(m_FileManager.GetPathSeparator(), drive.Name.Length, StringComparison.InvariantCulture);
             while (idx >= 0) {
                 var path = position.Substring(0, idx);
                 if (!paths.Contains(path))
                     paths.Add(position.Substring(0, idx));
-                idx = position.IndexOf(m_FileManager.GetPathSeparator(), idx + 1);
+                idx = position.IndexOf(m_FileManager.GetPathSeparator(), idx + 1, StringComparison.InvariantCulture);
             }
 
             // Expand the tree
@@ -158,8 +161,7 @@ namespace AVFM.Controls
 
                     ti.PropertyChanged += async (sender, args) => {
                         if (args.PropertyName == "IsExpanded") {
-                            var sti = sender as TreeItem;
-                            if (sti.IsExpanded && !sti.Loaded) {
+                            if (sender is TreeItem { IsExpanded: true, Loaded: false } sti) {
                                 m_LoadingItems = true;
                                 m_Tree.Cursor = new Cursor(StandardCursorType.Wait);
                                 sti.Children.Clear();

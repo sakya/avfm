@@ -50,7 +50,7 @@ namespace AVFM.Views
                     tasks.Add(AddNewTab(m_RightTabControl, AppSettings.GetHomePath()));
                 }
                 await Task.WhenAll(tasks.ToArray());
-                SetShowHiddenFiles(AppSettings.ShowHiddenFiles);
+                await SetShowHiddenFiles(AppSettings.ShowHiddenFiles);
             };
 
             SetTreeVisibility(AppSettings.ShowTree);
@@ -279,7 +279,7 @@ namespace AVFM.Views
             m_GridSplitter.IsVisible = visible;
         } // SetTreeVisibility
 
-        private void SetShowHiddenFiles(bool show)
+        private async Task SetShowHiddenFiles(bool show)
         {
             AppSettings.ShowHiddenFiles = show;
             m_ShowHiddenFilesMenu.IsChecked = show;
@@ -292,6 +292,8 @@ namespace AVFM.Views
                     fm.ShowHiddenFiles = show;
                 }
             }
+
+            await m_Tree.Reload();
         } // SetShowHiddenFiles
         public void ShowNotification(NotificationType type, string title, string message)
         {
@@ -380,9 +382,9 @@ namespace AVFM.Views
             Close();
         } // OnExitClicked
 
-        private void OnShowHiddenFilesChanged(object sender, RoutedEventArgs args)
+        private async void OnShowHiddenFilesChanged(object sender, RoutedEventArgs args)
         {
-            SetShowHiddenFiles((sender as CheckableMenuItem).IsChecked);
+            await SetShowHiddenFiles((sender as CheckableMenuItem).IsChecked);
         } // OnShowHiddenFilesChanged
 
         private void OnShowTreeChanged(object sender, RoutedEventArgs args)
